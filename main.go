@@ -6,13 +6,47 @@ import (
 	"log"
 	"net"
 	"os"
+	"sync"
 
 	"github.com/krasin/spectrum-sim/api"
 )
 
 var port = flag.Int("port", 2438, "TCP port to listen")
 
-func handle(conn net.Conn) {
+type channel struct {
+}
+
+func (ch *channel) Send(data []byte) error {
+	panic("channel.Send not implemented")
+}
+
+func (ch *channel) Listen() error {
+	panic("channel.Listen not implemented")
+}
+
+func newChannel() *channel {
+	return &channel{}
+}
+
+type server struct {
+	m     sync.Mutex
+	chans map[int]*channel
+}
+
+func newServer() *server {
+	return &server{chans: make(map[int]*channel)}
+}
+
+func (s *server) getChannel(ch int) *channel {
+	s.m.Lock()
+	defer s.m.Unlock()
+	if s.chans[ch] == nil {
+		s.chans[ch] = newChannel()
+	}
+	return s.chans[ch]
+}
+
+func (s *server) handle(conn net.Conn) {
 	fmt.Printf("Conn: %+v\n", conn)
 	defer conn.Close()
 
@@ -24,9 +58,15 @@ func handle(conn net.Conn) {
 		}
 		switch cmd.Cmd {
 		case api.Send:
-			panic("send: not implemented")
+			if err = s.getChannel(cmd.Channel).Send(cmd.Data); err != nil {
+				log.Printf("Send failed: %v", err)
+				return
+			}
 		case api.Listen:
-			panic("listen: not implemented")
+			if err = s.getChannel(cmd.Channel).Listen(); err != nil {
+				log.Printf("Listen failed: %v", err)
+				return
+			}
 		default:
 			log.Printf("Client %v: unknown command %d", conn.RemoteAddr(), cmd.Cmd)
 			return
@@ -48,11 +88,12 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Printf("Serving on port %d...\n", *port)
+	s := newServer()
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
 			log.Printf("Accept: %v", err)
 		}
-		go handle(conn)
+		go s.handle(conn)
 	}
 }
