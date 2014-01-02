@@ -17,18 +17,18 @@ func handle(conn net.Conn) {
 	defer conn.Close()
 
 	for {
-		cmd, _, _, err := api.Read(conn)
+		cmd, err := api.Read(conn)
 		if err != nil {
 			log.Printf("Client %v: %v", conn.RemoteAddr(), err)
 			return
 		}
-		switch cmd {
+		switch cmd.Cmd {
 		case api.Send:
 			panic("send: not implemented")
 		case api.Listen:
 			panic("listen: not implemented")
 		default:
-			log.Printf("Client %v: unknown command %d", conn.RemoteAddr(), cmd)
+			log.Printf("Client %v: unknown command %d", conn.RemoteAddr(), cmd.Cmd)
 			return
 		}
 	}
