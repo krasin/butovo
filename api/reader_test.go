@@ -11,10 +11,10 @@ func TestRead(t *testing.T) {
 	tests := []struct {
 		title string
 		in    []byte
-		cmd   Command
+		err   error
+		cmd   CommandType
 		ch    int
 		data  []byte
-		err   error
 	}{
 		{
 			title: "Empty",
@@ -56,7 +56,7 @@ func TestRead(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		cmd, ch, data, err := Read(bytes.NewBuffer(tt.in))
+		cmd, err := Read(bytes.NewBuffer(tt.in))
 		if fmt.Sprintf("%v", err) != fmt.Sprintf("%v", tt.err) {
 			t.Errorf("%q: unexpected error: %v, want: %v", tt.title, err, tt.err)
 			continue
@@ -64,16 +64,16 @@ func TestRead(t *testing.T) {
 		if err != nil {
 			continue
 		}
-		if cmd != tt.cmd {
-			t.Errorf("%q: cmd: %d, want: %d", tt.title, cmd, tt.cmd)
+		if cmd.Cmd != tt.cmd {
+			t.Errorf("%q: cmd: %d, want: %d", tt.title, cmd.Cmd, tt.cmd)
 			continue
 		}
-		if ch != tt.ch {
-			t.Errorf("%q: ch: %d, want: %d", tt.title, ch, tt.ch)
+		if cmd.Channel != tt.ch {
+			t.Errorf("%q: ch: %d, want: %d", tt.title, cmd.Channel, tt.ch)
 			continue
 		}
-		if !bytes.Equal(data, tt.data) {
-			t.Errorf("%q, data: %v, want: %v", tt.title, data, tt.data)
+		if !bytes.Equal(cmd.Data, tt.data) {
+			t.Errorf("%q, data: %v, want: %v", tt.title, cmd.Data, tt.data)
 			continue
 		}
 	}
