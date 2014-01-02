@@ -3,6 +3,7 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"os"
@@ -10,9 +11,37 @@ import (
 
 var port = flag.Int("port", 2438, "TCP port to listen")
 
+type command int
+
+const (
+	send   command = 0
+	listen command = 1
+)
+
+func read(r io.Reader) (cmd command, ch int, data []byte, err error) {
+	panic("read: not implemented")
+}
+
 func handle(conn net.Conn) {
 	fmt.Printf("Conn: %+v\n", conn)
-	conn.Close()
+	defer conn.Close()
+
+	for {
+		cmd, _, _, err := read(conn)
+		if err != nil {
+			log.Printf("Client %v: %v", conn.RemoteAddr(), err)
+			return
+		}
+		switch cmd {
+		case send:
+			panic("send: not implemented")
+		case listen:
+			panic("listen: not implemented")
+		default:
+			log.Printf("Client %v: unknown command %d", conn.RemoteAddr(), cmd)
+			return
+		}
+	}
 }
 
 func main() {
