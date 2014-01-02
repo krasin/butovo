@@ -1,12 +1,18 @@
 package main
 
 import (
+	"encoding/binary"
 	"flag"
 	"fmt"
 	"io"
 	"log"
 	"net"
 	"os"
+)
+
+const (
+	minPacketSize = 8
+	maxPacketSize = 128
 )
 
 var port = flag.Int("port", 2438, "TCP port to listen")
@@ -19,7 +25,29 @@ const (
 )
 
 func read(r io.Reader) (cmd command, ch int, data []byte, err error) {
-	panic("read: not implemented")
+	var size uint32
+	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
+		err = fmt.Errorf("Could not read packet size: %v", err)
+		return
+	}
+	if size > maxPacketSize {
+		err = fmt.Errorf("Packet size too large: %d. Max packet size: %d", size, maxPacketSize)
+		return
+	}
+	if size < minPacketSize {
+		err = fmt.Errorf("Packet size too small: %d. Min packet size: %d", size, minPacketSize)
+		return
+	}
+	data = make([]byte, size)
+	if _, err = io.ReadFull(r, data); err != nil {
+		data = nil
+		err = fmt.Errorf("Could not read packet body (size: %d): %v", size, err)
+		return
+	}
+	cmd = command(uint32(data[0]) + uint32(data[1])<<8 + uint32(data[2])<<16 + uint32(data[3])<<24)
+	ch = int(data[0]) + int(data[1])<<8 + int(data[2])<<16 + int(data[3])<<24
+	data = data[8:]
+	return
 }
 
 func handle(conn net.Conn) {
