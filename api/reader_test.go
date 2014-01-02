@@ -20,6 +20,39 @@ func TestRead(t *testing.T) {
 			title: "Empty",
 			err:   fmt.Errorf("Could not read command body size: %v", io.EOF),
 		},
+		{
+			title: "Short size field",
+			in:    []byte{100},
+			err:   fmt.Errorf("Could not read command body size: %v", io.ErrUnexpectedEOF),
+		},
+		{
+			title: "Too small",
+			in:    []byte{2, 0, 0, 0},
+			err:   fmt.Errorf("Command body size too small: %d. Min packet size: %d", 2, MinSize),
+		},
+		{
+			title: "Too big",
+			in:    []byte{200, 0, 0, 0},
+			err:   fmt.Errorf("Command body size too large: %d. Max packet size: %d", 200, MaxSize),
+		},
+		{
+			title: "No command body",
+			in:    []byte{100, 0, 0, 0},
+			err:   fmt.Errorf("Could not read command body (size: %d): %v", 100, io.EOF),
+		},
+		{
+			title: "Send cmd",
+			in:    []byte{13, 0, 0, 0, 0, 0, 0, 0, 37, 0, 0, 0, 'h', 'e', 'l', 'l', 'o'},
+			cmd:   Send,
+			ch:    37,
+			data:  []byte("hello"),
+		},
+		{
+			title: "Listen cmd",
+			in:    []byte{8, 0, 0, 0, 1, 0, 0, 0, 37, 0, 0, 0},
+			cmd:   Listen,
+			ch:    37,
+		},
 	}
 
 	for _, tt := range tests {
