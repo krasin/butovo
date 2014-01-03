@@ -3,45 +3,59 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io"
 	"log"
 	"net"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/krasin/spectrum-sim/api"
 )
 
 var port = flag.Int("port", 2438, "TCP port to listen")
 
-type channel struct {
+type chanCmd int
+
+const (
+	chanSend chanCmd = iota
+	chanListen
+	chanForget
+)
+
+type chanReq struct {
+	cmd  chanCmd
+	data []byte
+	key  string
+	w    io.Writer
 }
 
-func (ch *channel) Send(data []byte) error {
-	panic("channel.Send not implemented")
+func runChannel(name string, ch <-chan chanReq) {
+	for req := range ch {
+		log.Printf("%q: %+v", name, req)
+	}
 }
 
-func (ch *channel) Listen() error {
-	panic("channel.Listen not implemented")
-}
-
-func newChannel() *channel {
-	return &channel{}
+func newChannel(name string) chan<- chanReq {
+	ch := make(chan chanReq)
+	go runChannel(name, ch)
+	return ch
 }
 
 type server struct {
 	m     sync.Mutex
-	chans map[int]*channel
+	chans map[int]chan<- chanReq
 }
 
 func newServer() *server {
-	return &server{chans: make(map[int]*channel)}
+	return &server{chans: make(map[int]chan<- chanReq)}
 }
 
-func (s *server) getChannel(ch int) *channel {
+func (s *server) getChannel(ch int) chan<- chanReq {
 	s.m.Lock()
 	defer s.m.Unlock()
 	if s.chans[ch] == nil {
-		s.chans[ch] = newChannel()
+		s.chans[ch] = newChannel(fmt.Sprintf("channel %d", ch))
 	}
 	return s.chans[ch]
 }
@@ -50,23 +64,45 @@ func (s *server) handle(conn net.Conn) {
 	fmt.Printf("Conn: %+v\n", conn)
 	defer conn.Close()
 
+	curCh := -1
+	key := fmt.Sprintf("key-%d", time.Now().UnixNano())
+
+	forget := func() {
+		if curCh < 0 {
+			return
+		}
+
+		s.getChannel(curCh) <- chanReq{
+			cmd: chanForget,
+			key: key,
+		}
+		curCh = -1
+	}
+	defer forget()
+
 	for {
 		cmd, err := api.Read(conn)
 		if err != nil {
 			log.Printf("Client %v: %v", conn.RemoteAddr(), err)
 			return
 		}
+		ch := s.getChannel(cmd.Channel)
+
 		switch cmd.Cmd {
 		case api.Send:
-			if err = s.getChannel(cmd.Channel).Send(cmd.Data); err != nil {
-				log.Printf("Send failed: %v", err)
-				return
+			forget()
+			ch <- chanReq{
+				cmd:  chanSend,
+				data: cmd.Data,
 			}
 		case api.Listen:
-			if err = s.getChannel(cmd.Channel).Listen(); err != nil {
-				log.Printf("Listen failed: %v", err)
-				return
+			forget()
+			ch <- chanReq{
+				cmd: chanListen,
+				key: key,
+				w:   conn,
 			}
+			curCh = cmd.Channel
 		default:
 			log.Printf("Client %v: unknown command %d", conn.RemoteAddr(), cmd.Cmd)
 			return
