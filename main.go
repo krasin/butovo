@@ -28,16 +28,22 @@ type chanReq struct {
 	data []byte
 	key  string
 	w    io.Writer
+	ts   time.Time
 }
 
-func runChannel(name string, ch <-chan chanReq) {
+func runChannel(id int, ch <-chan chanReq, errChan chan<- error) {
 	w := make(map[string]io.Writer)
 
 	for req := range ch {
-		log.Printf("%q: %+v", name, req)
+		log.Printf("Channel %d: %+v", id, req)
 		switch req.cmd {
 		case chanSend:
-			log.Printf("chanSend not implemented")
+			data, err := api.Write(uint32(id), req.ts, req.data)
+			if err != nil {
+				errChan <- err
+				continue
+			}
+			log.Printf("to send: %v", data)
 		case chanListen:
 			w[req.key] = req.w
 		case chanForget:
@@ -46,26 +52,39 @@ func runChannel(name string, ch <-chan chanReq) {
 	}
 }
 
-func newChannel(name string) chan<- chanReq {
+func newChannel(id int, errChan chan<- error) chan<- chanReq {
 	ch := make(chan chanReq)
-	go runChannel(name, ch)
+	go runChannel(id, ch, errChan)
 	return ch
 }
 
 type server struct {
-	m     sync.Mutex
-	chans map[int]chan<- chanReq
+	m       sync.Mutex
+	errChan chan<- error
+	chans   map[int]chan<- chanReq
+}
+
+func handleErrors(errChan <-chan error) {
+	for err := range errChan {
+		log.Print(err)
+	}
 }
 
 func newServer() *server {
-	return &server{chans: make(map[int]chan<- chanReq)}
+	errChan := make(chan error)
+
+	go handleErrors(errChan)
+	return &server{
+		chans:   make(map[int]chan<- chanReq),
+		errChan: errChan,
+	}
 }
 
 func (s *server) getChannel(ch int) chan<- chanReq {
 	s.m.Lock()
 	defer s.m.Unlock()
 	if s.chans[ch] == nil {
-		s.chans[ch] = newChannel(fmt.Sprintf("channel %d", ch))
+		s.chans[ch] = newChannel(ch, s.errChan)
 	}
 	return s.chans[ch]
 }
@@ -104,6 +123,7 @@ func (s *server) handle(conn net.Conn) {
 			ch <- chanReq{
 				cmd:  chanSend,
 				data: cmd.Data,
+				ts:   time.Now().UTC(),
 			}
 		case api.Listen:
 			forget()
