@@ -18,27 +18,32 @@ func TestRead(t *testing.T) {
 	}{
 		{
 			title: "Empty",
-			err:   fmt.Errorf("Could not read command body size: %v", io.EOF),
+			err:   fmt.Errorf("could not read command body size: %v", io.EOF),
 		},
 		{
 			title: "Short size field",
 			in:    []byte{100},
-			err:   fmt.Errorf("Could not read command body size: %v", io.ErrUnexpectedEOF),
+			err:   fmt.Errorf("could not read command body size: %v", io.ErrUnexpectedEOF),
 		},
 		{
 			title: "Too small",
 			in:    []byte{2, 0, 0, 0},
-			err:   fmt.Errorf("Command body size too small: %d. Min packet size: %d", 2, MinSize),
+			err:   fmt.Errorf("command body size too small: %d. Min packet size: %d", 2, MinSize),
 		},
 		{
 			title: "Too big",
 			in:    []byte{200, 0, 0, 0},
-			err:   fmt.Errorf("Command body size too large: %d. Max packet size: %d", 200, MaxSize),
+			err:   fmt.Errorf("command body size too large: %d. Max packet size: %d", 200, MaxSize),
 		},
 		{
 			title: "No command body",
 			in:    []byte{100, 0, 0, 0},
-			err:   fmt.Errorf("Could not read command body (size: %d): %v", 100, io.EOF),
+			err:   fmt.Errorf("could not read command body (size: %d): %v", 100, io.EOF),
+		},
+		{
+			title: "Negative channel",
+			in:    []byte{8, 0, 0, 0, 1, 0, 0, 0, 255, 255, 255, 255},
+			err:   fmt.Errorf("channel is negative: -1"),
 		},
 		{
 			title: "Send cmd",
@@ -58,7 +63,7 @@ func TestRead(t *testing.T) {
 	for _, tt := range tests {
 		cmd, err := Read(bytes.NewBuffer(tt.in))
 		if fmt.Sprintf("%v", err) != fmt.Sprintf("%v", tt.err) {
-			t.Errorf("%q: unexpected error: %v, want: %v", tt.title, err, tt.err)
+			t.Errorf("%q: unexpected error: %v, ch: %d, want: %v", tt.title, err, cmd.Channel, tt.err)
 			continue
 		}
 		if err != nil {
