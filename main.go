@@ -31,8 +31,18 @@ type chanReq struct {
 }
 
 func runChannel(name string, ch <-chan chanReq) {
+	w := make(map[string]io.Writer)
+
 	for req := range ch {
 		log.Printf("%q: %+v", name, req)
+		switch req.cmd {
+		case chanSend:
+			log.Printf("chanSend not implemented")
+		case chanListen:
+			w[req.key] = req.w
+		case chanForget:
+			delete(w, req.key)
+		}
 	}
 }
 
