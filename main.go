@@ -27,12 +27,13 @@ type chanReq struct {
 	cmd  chanCmd
 	data []byte
 	key  string
+	to   chan<- []byte
 	w    io.Writer
 	ts   time.Time
 }
 
 func runChannel(id int, ch <-chan chanReq, errChan chan<- error) {
-	w := make(map[string]io.Writer)
+	lis := make(map[string]chan<- []byte)
 
 	for req := range ch {
 		log.Printf("Channel %d: %+v", id, req)
@@ -44,10 +45,17 @@ func runChannel(id int, ch <-chan chanReq, errChan chan<- error) {
 				continue
 			}
 			log.Printf("to send: %v", data)
+			for _, to := range lis {
+				// It's better to drop some packet, than block on a slow client.
+				select {
+				case to <- data:
+				default:
+				}
+			}
 		case chanListen:
-			w[req.key] = req.w
+			lis[req.key] = req.to
 		case chanForget:
-			delete(w, req.key)
+			delete(lis, req.key)
 		}
 	}
 }
@@ -89,9 +97,28 @@ func (s *server) getChannel(ch int) chan<- chanReq {
 	return s.chans[ch]
 }
 
+func runSender(w io.Writer, recvCh <-chan []byte, closeCh <-chan bool, errChan chan<- error) {
+	for {
+		select {
+		case data := <-recvCh:
+			_, err := w.Write(data)
+			if err != nil {
+				errChan <- err
+			}
+		case <-closeCh:
+			return
+		}
+	}
+}
+
 func (s *server) handle(conn net.Conn) {
 	fmt.Printf("Conn: %+v\n", conn)
 	defer conn.Close()
+
+	recvCh := make(chan []byte, 1)
+	closeCh := make(chan bool)
+	go runSender(conn, recvCh, closeCh, s.errChan)
+	defer close(closeCh)
 
 	curCh := -1
 	key := fmt.Sprintf("key-%d", time.Now().UnixNano())
@@ -130,7 +157,7 @@ func (s *server) handle(conn net.Conn) {
 			ch <- chanReq{
 				cmd: chanListen,
 				key: key,
-				w:   conn,
+				to:  recvCh,
 			}
 			curCh = cmd.Channel
 		default:
