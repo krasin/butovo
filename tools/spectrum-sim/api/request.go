@@ -35,32 +35,28 @@ type Request struct {
 // Size is the number of bytes in the rest of the message.
 // Channel must not exceeed MaxChannel.
 // Data length must be not greater than MaxSize.
-func ReadRequest(r io.Reader) (cmd *Request, err error) {
+func ReadRequest(r io.Reader) (*Request, error) {
 	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		err = fmt.Errorf("could not read command body size: %v", err)
-		return
+	if err := binary.Read(r, binary.LittleEndian, &size); err != nil {
+		if err == io.EOF {
+			return nil, err
+		}
+		return nil, fmt.Errorf("could not read command body size: %v", err)
 	}
 	if size > MaxSize+8 {
-		err = fmt.Errorf("command body size too large: %d. Max packet size: %d", size, MaxSize+8)
-		return
+		return nil, fmt.Errorf("command body size too large: %d. Max packet size: %d", size, MaxSize+8)
 	}
 	if size < 8 {
-		err = fmt.Errorf("command body size too small: %d. Min packet size: 8", size)
-		return
+		return nil, fmt.Errorf("command body size too small: %d. Min packet size: 8", size)
 	}
 	data := make([]byte, size)
-	if _, err = io.ReadFull(r, data); err != nil {
-		data = nil
-		err = fmt.Errorf("could not read command body (size: %d): %v", size, err)
-		return
+	if _, err := io.ReadFull(r, data); err != nil {
+		return nil, fmt.Errorf("could not read command body (size: %d): %v", size, err)
 	}
 	typ := RequestType(uint32(data[0]) + uint32(data[1])<<8 + uint32(data[2])<<16 + uint32(data[3])<<24)
 	ch := uint32(data[4]) + uint32(data[5])<<8 + uint32(data[6])<<16 + uint32(data[7])<<24
 	if ch > MaxChannel {
-		data = nil
-		err = fmt.Errorf("channel is too large: %d. Max channel: %d", ch, MaxChannel)
-		return
+		return nil, fmt.Errorf("channel is too large: %d. Max channel: %d", ch, MaxChannel)
 	}
 	return &Request{
 		Type:    typ,

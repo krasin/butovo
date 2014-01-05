@@ -12,7 +12,6 @@ import (
 	"io"
 	"log"
 	"math"
-	"net"
 	"sync"
 	"time"
 
@@ -133,7 +132,7 @@ func runSender(w io.Writer, recvCh <-chan []byte, closeCh <-chan bool, errChan c
 	}
 }
 
-func (s *Server) Handle(conn net.Conn) {
+func (s *Server) Handle(conn io.ReadWriteCloser) {
 	log.Printf("Conn: %+v", conn)
 	defer conn.Close()
 
@@ -157,7 +156,10 @@ func (s *Server) Handle(conn net.Conn) {
 	for {
 		req, err := api.ReadRequest(conn)
 		if err != nil {
-			log.Printf("Client %v: %v", conn.RemoteAddr(), err)
+			// Don't report EOF, since it's expected that the client connection will be closed at some point.
+			if err != io.EOF {
+				s.errChan <- err
+			}
 			return
 		}
 
@@ -184,7 +186,7 @@ func (s *Server) Handle(conn net.Conn) {
 			}
 			curCh = req.Channel
 		default:
-			log.Printf("Client %v: unknown command %d", conn.RemoteAddr(), req.Data)
+			log.Printf("Unknown command %d", req.Type)
 			return
 		}
 	}

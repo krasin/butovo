@@ -19,7 +19,7 @@ func TestReadRequest(t *testing.T) {
 	}{
 		{
 			title: "Empty",
-			err:   fmt.Errorf("could not read command body size: %v", io.EOF),
+			err:   io.EOF,
 		},
 		{
 			title: "Short size field",
