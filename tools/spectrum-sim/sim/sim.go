@@ -1,6 +1,8 @@
-// Package sim provides a server that accepts Listen and Send request to numbered channels
-// and multiplexes the sent data to the listeners. It's supposed to be useful for Bluetooth Low Energy
-// stacks testing, because it provides a packet level abstraction of the spectrum.
+// Package sim provides a server that accepts Listen and Send requests to numbered channels
+// and multiplexes the sent data to the listeners.
+//
+// It's supposed to be useful for Bluetooth Low Energy  stacks testing, because
+// it provides a packet level abstraction of the spectrum.
 // The wire format is simple enough to be implemented in plain C.
 // It's documented in github.com/krasin/butovo/tools/spectrum-sim/api package.
 package sim
