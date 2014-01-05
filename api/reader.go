@@ -12,13 +12,14 @@ const (
 	Send   CommandType = 0
 	Listen CommandType = 1
 
-	MinSize = 8
-	MaxSize = 128
+	MinSize    = 8
+	MaxSize    = 128
+	MaxChannel = 1<<31 - 1
 )
 
 type Command struct {
 	Cmd     CommandType
-	Channel int
+	Channel uint32
 	Data    []byte
 }
 
@@ -27,7 +28,7 @@ type Command struct {
 // <uint32 size> <uint32 cmd> <uint32 ch> <data>
 // where all multi-byte fields are low-endian.
 // Size is the number of bytes in the rest of the message. It must not exceed MaxSize.
-// Channel must be less than 1^31 = 2147483648.
+// Channel must not exceeed MaxChannel.
 func ReadRequest(r io.Reader) (cmd *Command, err error) {
 	var size uint32
 	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
@@ -49,10 +50,10 @@ func ReadRequest(r io.Reader) (cmd *Command, err error) {
 		return
 	}
 	typ := CommandType(uint32(data[0]) + uint32(data[1])<<8 + uint32(data[2])<<16 + uint32(data[3])<<24)
-	ch := int(data[4]) + int(data[5])<<8 + int(data[6])<<16 + int(data[7])<<24
-	if int32(ch) < 0 {
+	ch := uint32(data[4]) + uint32(data[5])<<8 + uint32(data[6])<<16 + uint32(data[7])<<24
+	if ch > MaxChannel {
 		data = nil
-		err = fmt.Errorf("channel is negative: %d", int32(ch))
+		err = fmt.Errorf("channel is too large: %d. Max channel: %d", ch, MaxChannel)
 		return
 	}
 	return &Command{

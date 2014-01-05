@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"io"
 	"log"
+	"math"
 	"net"
 	"os"
 	"sync"
@@ -32,7 +33,7 @@ type chanReq struct {
 	ts   time.Time
 }
 
-func runChannel(id int, ch <-chan chanReq, errChan chan<- error) {
+func runChannel(id uint32, ch <-chan chanReq, errChan chan<- error) {
 	lis := make(map[string]chan<- []byte)
 
 	for req := range ch {
@@ -60,7 +61,7 @@ func runChannel(id int, ch <-chan chanReq, errChan chan<- error) {
 	}
 }
 
-func newChannel(id int, errChan chan<- error) chan<- chanReq {
+func newChannel(id uint32, errChan chan<- error) chan<- chanReq {
 	ch := make(chan chanReq)
 	go runChannel(id, ch, errChan)
 	return ch
@@ -69,7 +70,7 @@ func newChannel(id int, errChan chan<- error) chan<- chanReq {
 type server struct {
 	m       sync.Mutex
 	errChan chan<- error
-	chans   map[int]chan<- chanReq
+	chans   map[uint32]chan<- chanReq
 }
 
 func handleErrors(errChan <-chan error) {
@@ -83,12 +84,12 @@ func newServer() *server {
 
 	go handleErrors(errChan)
 	return &server{
-		chans:   make(map[int]chan<- chanReq),
+		chans:   make(map[uint32]chan<- chanReq),
 		errChan: errChan,
 	}
 }
 
-func (s *server) getChannel(ch int) chan<- chanReq {
+func (s *server) getChannel(ch uint32) chan<- chanReq {
 	s.m.Lock()
 	defer s.m.Unlock()
 	if s.chans[ch] == nil {
@@ -120,7 +121,7 @@ func (s *server) handle(conn net.Conn) {
 	go runSender(conn, recvCh, closeCh, s.errChan)
 	defer close(closeCh)
 
-	curCh := -1
+	var curCh uint32 = math.MaxUint32
 	key := fmt.Sprintf("key-%d", time.Now().UnixNano())
 
 	forget := func() {
@@ -132,7 +133,7 @@ func (s *server) handle(conn net.Conn) {
 			cmd: chanForget,
 			key: key,
 		}
-		curCh = -1
+		curCh = math.MaxUint32
 	}
 	defer forget()
 

@@ -2,6 +2,7 @@ package api
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"io"
 	"testing"
@@ -13,7 +14,7 @@ func TestReadRequest(t *testing.T) {
 		in    []byte
 		err   error
 		cmd   CommandType
-		ch    int
+		ch    uint32
 		data  []byte
 	}{
 		{
@@ -41,9 +42,9 @@ func TestReadRequest(t *testing.T) {
 			err:   fmt.Errorf("could not read command body (size: %d): %v", 100, io.EOF),
 		},
 		{
-			title: "Negative channel",
+			title: "Too large channel",
 			in:    []byte{8, 0, 0, 0, 1, 0, 0, 0, 255, 255, 255, 255},
-			err:   fmt.Errorf("channel is negative: -1"),
+			err:   errors.New("channel is too large: 4294967295. Max channel: 2147483647"),
 		},
 		{
 			title: "Send cmd",
@@ -63,7 +64,7 @@ func TestReadRequest(t *testing.T) {
 	for _, tt := range tests {
 		cmd, err := ReadRequest(bytes.NewBuffer(tt.in))
 		if fmt.Sprintf("%v", err) != fmt.Sprintf("%v", tt.err) {
-			t.Errorf("%q: unexpected error: %v, ch: %d, want: %v", tt.title, err, cmd.Channel, tt.err)
+			t.Errorf("%q: unexpected error: %v, want: %v", tt.title, err, tt.err)
 			continue
 		}
 		if err != nil {
@@ -79,6 +80,15 @@ func TestReadRequest(t *testing.T) {
 		}
 		if !bytes.Equal(cmd.Data, tt.data) {
 			t.Errorf("%q, data: %v, want: %v", tt.title, cmd.Data, tt.data)
+			continue
+		}
+		out, err := WriteRequest(cmd)
+		if err != nil {
+			t.Errorf("%q: WriteRequest(%+v): %v", tt.title, cmd, err)
+			continue
+		}
+		if !bytes.Equal(out, tt.in) {
+			t.Errorf("%q: WriteRequest(%+v): %v, want: %v", tt.title, out, tt.in)
 			continue
 		}
 	}

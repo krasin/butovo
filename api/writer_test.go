@@ -8,6 +8,45 @@ import (
 	"time"
 )
 
+func TestWriteRequest(t *testing.T) {
+	tests := []struct {
+		title string
+		cmd   CommandType
+		ch    uint32
+		data  []byte
+		out   []byte
+		err   error
+	}{
+		{
+			title: "Listen",
+			cmd:   Listen,
+			ch:    258,
+			out: []byte{8, 0, 0, 0,
+				1, 0, 0, 0,
+				2, 1, 0, 0},
+		},
+	}
+	for _, tt := range tests {
+		cmd := &Command{
+			Cmd:     tt.cmd,
+			Channel: tt.ch,
+			Data:    tt.data,
+		}
+		out, err := WriteRequest(cmd)
+		if fmt.Sprintf("%v", err) != fmt.Sprintf("%v", tt.err) {
+			t.Errorf("%s: WriteRequest: unexpected err: %v, want: %v", tt.title, err, tt.err)
+			continue
+		}
+		if err != nil {
+			continue
+		}
+		if !bytes.Equal(out, tt.out) {
+			t.Errorf("%s: unexpected out:\n%v\nwant:\n%v", out, tt.out)
+			continue
+		}
+	}
+}
+
 const tsval = 0x1234567823456789
 
 var timestamp = time.Unix(tsval/int64(1E9), tsval%int64(1E9))
