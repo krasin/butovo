@@ -69,16 +69,7 @@ type Server struct {
 	chans   map[uint32]chan<- chanReq
 }
 
-func handleErrors(errChan <-chan error) {
-	for err := range errChan {
-		log.Print(err)
-	}
-}
-
-func NewServer() *Server {
-	errChan := make(chan error)
-
-	go handleErrors(errChan)
+func NewServer(errChan chan<- error) *Server {
 	return &Server{
 		chans:   make(map[uint32]chan<- chanReq),
 		errChan: errChan,

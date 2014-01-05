@@ -12,6 +12,12 @@ import (
 
 var port = flag.Int("port", 2438, "TCP port to listen")
 
+func handleErrors(errChan <-chan error) {
+	for err := range errChan {
+		log.Print(err)
+	}
+}
+
 func main() {
 	flag.Parse()
 
@@ -26,7 +32,10 @@ func main() {
 		os.Exit(1)
 	}
 	fmt.Printf("Serving on port %d...\n", *port)
-	s := sim.NewServer()
+
+	errChan := make(chan error)
+	go handleErrors(errChan)
+	s := sim.NewServer(errChan)
 	for {
 		conn, err := ln.Accept()
 		if err != nil {
