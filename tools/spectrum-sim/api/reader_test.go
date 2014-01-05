@@ -14,7 +14,7 @@ func TestReadRequest(t *testing.T) {
 		title string
 		in    []byte
 		err   error
-		cmd   CommandType
+		cmd   RequestType
 		ch    uint32
 		data  []byte
 	}{

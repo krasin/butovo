@@ -8,11 +8,11 @@ import (
 	"time"
 )
 
-type CommandType int
+type RequestType int
 
 const (
-	Send   CommandType = 0
-	Listen CommandType = 1
+	Send   RequestType = 0
+	Listen RequestType = 1
 )
 
 const (
@@ -22,8 +22,8 @@ const (
 	MaxChannel = math.MaxInt32
 )
 
-type Command struct {
-	Cmd     CommandType
+type Request struct {
+	Cmd     RequestType
 	Channel uint32
 	Data    []byte
 }
@@ -35,7 +35,7 @@ type Command struct {
 // Size is the number of bytes in the rest of the message.
 // Channel must not exceeed MaxChannel.
 // Data length must be not greater than MaxSize.
-func ReadRequest(r io.Reader) (cmd *Command, err error) {
+func ReadRequest(r io.Reader) (cmd *Request, err error) {
 	var size uint32
 	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
 		err = fmt.Errorf("could not read command body size: %v", err)
@@ -55,14 +55,14 @@ func ReadRequest(r io.Reader) (cmd *Command, err error) {
 		err = fmt.Errorf("could not read command body (size: %d): %v", size, err)
 		return
 	}
-	typ := CommandType(uint32(data[0]) + uint32(data[1])<<8 + uint32(data[2])<<16 + uint32(data[3])<<24)
+	typ := RequestType(uint32(data[0]) + uint32(data[1])<<8 + uint32(data[2])<<16 + uint32(data[3])<<24)
 	ch := uint32(data[4]) + uint32(data[5])<<8 + uint32(data[6])<<16 + uint32(data[7])<<24
 	if ch > MaxChannel {
 		data = nil
 		err = fmt.Errorf("channel is too large: %d. Max channel: %d", ch, MaxChannel)
 		return
 	}
-	return &Command{
+	return &Request{
 		Cmd:     typ,
 		Channel: ch,
 		Data:    data[8:],

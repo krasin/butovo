@@ -10,7 +10,7 @@ import (
 
 // WriteRequest converts a command into the request data.
 // The format is described in the documentation to ReadRequest.
-func WriteRequest(cmd *Command) ([]byte, error) {
+func WriteRequest(cmd *Request) ([]byte, error) {
 	var buf bytes.Buffer
 
 	if len(cmd.Data) > MaxSize {

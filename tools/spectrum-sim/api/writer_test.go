@@ -11,7 +11,7 @@ import (
 func TestWriteRequest(t *testing.T) {
 	tests := []struct {
 		title string
-		cmd   CommandType
+		cmd   RequestType
 		ch    uint32
 		data  []byte
 		out   []byte
@@ -27,7 +27,7 @@ func TestWriteRequest(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		cmd := &Command{
+		cmd := &Request{
 			Cmd:     tt.cmd,
 			Channel: tt.ch,
 			Data:    tt.data,
