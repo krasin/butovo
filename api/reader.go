@@ -22,6 +22,12 @@ type Command struct {
 	Data    []byte
 }
 
+// ReadRequest reads a request from the reader.
+// The format is:
+// <uint32 size> <uint32 cmd> <uint32 ch> <data>
+// where all multi-byte fields are low-endian.
+// Size is the number of bytes in the rest of the message. It must not exceed MaxSize.
+// Channel must be less than 1^31 = 2147483648.
 func ReadRequest(r io.Reader) (cmd *Command, err error) {
 	var size uint32
 	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
