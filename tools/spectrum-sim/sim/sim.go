@@ -148,36 +148,36 @@ func (s *Server) Handle(conn net.Conn) {
 	defer forget()
 
 	for {
-		cmd, err := api.ReadRequest(conn)
+		req, err := api.ReadRequest(conn)
 		if err != nil {
 			log.Printf("Client %v: %v", conn.RemoteAddr(), err)
 			return
 		}
 
-		switch cmd.Cmd {
+		switch req.Type {
 		case api.Send:
 			forget()
-			ch := s.getChannel(cmd.Channel, false)
+			ch := s.getChannel(req.Channel, false)
 			if ch == nil {
 				// no listeners
 				break
 			}
 			ch <- chanReq{
 				cmd:  chanSend,
-				data: cmd.Data,
+				data: req.Data,
 				ts:   time.Now().UTC(),
 			}
 		case api.Listen:
 			forget()
-			ch := s.getChannel(cmd.Channel, true)
+			ch := s.getChannel(req.Channel, true)
 			ch <- chanReq{
 				cmd: chanListen,
 				key: key,
 				to:  recvCh,
 			}
-			curCh = cmd.Channel
+			curCh = req.Channel
 		default:
-			log.Printf("Client %v: unknown command %d", conn.RemoteAddr(), cmd.Cmd)
+			log.Printf("Client %v: unknown command %d", conn.RemoteAddr(), req.Data)
 			return
 		}
 	}

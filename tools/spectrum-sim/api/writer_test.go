@@ -11,7 +11,7 @@ import (
 func TestWriteRequest(t *testing.T) {
 	tests := []struct {
 		title string
-		cmd   RequestType
+		typ   RequestType
 		ch    uint32
 		data  []byte
 		out   []byte
@@ -19,7 +19,7 @@ func TestWriteRequest(t *testing.T) {
 	}{
 		{
 			title: "Listen",
-			cmd:   Listen,
+			typ:   Listen,
 			ch:    258,
 			out: []byte{8, 0, 0, 0,
 				1, 0, 0, 0,
@@ -27,12 +27,12 @@ func TestWriteRequest(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		cmd := &Request{
-			Cmd:     tt.cmd,
+		req := &Request{
+			Type:    tt.typ,
 			Channel: tt.ch,
 			Data:    tt.data,
 		}
-		out, err := WriteRequest(cmd)
+		out, err := WriteRequest(req)
 		if fmt.Sprintf("%v", err) != fmt.Sprintf("%v", tt.err) {
 			t.Errorf("%s: WriteRequest: unexpected err: %v, want: %v", tt.title, err, tt.err)
 			continue

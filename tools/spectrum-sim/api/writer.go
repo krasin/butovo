@@ -9,23 +9,23 @@ import (
 
 // WriteRequest converts a command into the request data.
 // The format is described in the documentation to ReadRequest.
-func WriteRequest(cmd *Request) ([]byte, error) {
+func WriteRequest(req *Request) ([]byte, error) {
 	var buf bytes.Buffer
 
-	if len(cmd.Data) > MaxSize {
-		return nil, fmt.Errorf("too large data size: %d. Max data size: %d", len(cmd.Data), MaxSize)
+	if len(req.Data) > MaxSize {
+		return nil, fmt.Errorf("too large data size: %d. Max data size: %d", len(req.Data), MaxSize)
 	}
-	size := 8 + len(cmd.Data)
+	size := 8 + len(req.Data)
 	if err := binary.Write(&buf, binary.LittleEndian, uint32(size)); err != nil {
 		return nil, err
 	}
-	if err := binary.Write(&buf, binary.LittleEndian, uint32(cmd.Cmd)); err != nil {
+	if err := binary.Write(&buf, binary.LittleEndian, uint32(req.Type)); err != nil {
 		return nil, err
 	}
-	if err := binary.Write(&buf, binary.LittleEndian, uint32(cmd.Channel)); err != nil {
+	if err := binary.Write(&buf, binary.LittleEndian, uint32(req.Channel)); err != nil {
 		return nil, err
 	}
-	if _, err := buf.Write(cmd.Data); err != nil {
+	if _, err := buf.Write(req.Data); err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil

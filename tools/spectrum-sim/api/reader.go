@@ -23,7 +23,7 @@ const (
 )
 
 type Request struct {
-	Cmd     RequestType
+	Type    RequestType
 	Channel uint32
 	Data    []byte
 }
@@ -63,7 +63,7 @@ func ReadRequest(r io.Reader) (cmd *Request, err error) {
 		return
 	}
 	return &Request{
-		Cmd:     typ,
+		Type:    typ,
 		Channel: ch,
 		Data:    data[8:],
 	}, nil

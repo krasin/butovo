@@ -14,7 +14,7 @@ func TestReadRequest(t *testing.T) {
 		title string
 		in    []byte
 		err   error
-		cmd   RequestType
+		typ   RequestType
 		ch    uint32
 		data  []byte
 	}{
@@ -48,29 +48,29 @@ func TestReadRequest(t *testing.T) {
 			err:   errors.New("channel is too large: 4294967295. Max channel: 2147483647"),
 		},
 		{
-			title: "Send cmd",
+			title: "Send req",
 			in:    []byte{13, 0, 0, 0, 0, 0, 0, 0, 37, 0, 0, 0, 'h', 'e', 'l', 'l', 'o'},
-			cmd:   Send,
+			typ:   Send,
 			ch:    37,
 			data:  []byte("hello"),
 		},
 		{
 			title: "Send max data len",
 			in:    append([]byte{136, 0, 0, 0, 0, 0, 0, 0, 37, 0, 0, 0}, make([]byte, 128)...),
-			cmd:   Send,
+			typ:   Send,
 			ch:    37,
 			data:  make([]byte, 128),
 		},
 		{
-			title: "Listen cmd",
+			title: "Listen req",
 			in:    []byte{8, 0, 0, 0, 1, 0, 0, 0, 37, 0, 0, 0},
-			cmd:   Listen,
+			typ:   Listen,
 			ch:    37,
 		},
 	}
 
 	for _, tt := range tests {
-		cmd, err := ReadRequest(bytes.NewBuffer(tt.in))
+		req, err := ReadRequest(bytes.NewBuffer(tt.in))
 		if fmt.Sprintf("%v", err) != fmt.Sprintf("%v", tt.err) {
 			t.Errorf("%q: unexpected error: %v, want: %v", tt.title, err, tt.err)
 			continue
@@ -78,21 +78,21 @@ func TestReadRequest(t *testing.T) {
 		if err != nil {
 			continue
 		}
-		if cmd.Cmd != tt.cmd {
-			t.Errorf("%q: cmd: %d, want: %d", tt.title, cmd.Cmd, tt.cmd)
+		if req.Type != tt.typ {
+			t.Errorf("%q: typ: %d, want: %d", tt.title, req.Type, tt.typ)
 			continue
 		}
-		if cmd.Channel != tt.ch {
-			t.Errorf("%q: ch: %d, want: %d", tt.title, cmd.Channel, tt.ch)
+		if req.Channel != tt.ch {
+			t.Errorf("%q: ch: %d, want: %d", tt.title, req.Channel, tt.ch)
 			continue
 		}
-		if !bytes.Equal(cmd.Data, tt.data) {
-			t.Errorf("%q, data: %v, want: %v", tt.title, cmd.Data, tt.data)
+		if !bytes.Equal(req.Data, tt.data) {
+			t.Errorf("%q, data: %v, want: %v", tt.title, req.Data, tt.data)
 			continue
 		}
-		out, err := WriteRequest(cmd)
+		out, err := WriteRequest(req)
 		if err != nil {
-			t.Errorf("%q: WriteRequest(%+v): %v", tt.title, cmd, err)
+			t.Errorf("%q: WriteRequest(%+v): %v", tt.title, req, err)
 			continue
 		}
 		if !bytes.Equal(out, tt.in) {
