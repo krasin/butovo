@@ -11,7 +11,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/krasin/spectrum-sim/api"
+	"github.com/krasin/butovo/tools/spectrum-sim/api"
 )
 
 var port = flag.Int("port", 2438, "TCP port to listen")
