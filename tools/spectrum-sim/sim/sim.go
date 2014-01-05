@@ -109,7 +109,7 @@ func runSender(w io.Writer, recvCh <-chan []byte, closeCh <-chan bool, errChan c
 }
 
 func (s *Server) Handle(conn net.Conn) {
-	fmt.Printf("Conn: %+v\n", conn)
+	log.Printf("Conn: %+v\n", conn)
 	defer conn.Close()
 
 	recvCh := make(chan []byte, 1)
