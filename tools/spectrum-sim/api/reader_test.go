@@ -146,7 +146,7 @@ func TestReadResponse(t *testing.T) {
 		},
 	}
 	for _, tt := range tests {
-		ch, ts, data, err := ReadResponse(bytes.NewBuffer(tt.in))
+		resp, err := ReadResponse(bytes.NewBuffer(tt.in))
 		if fmt.Sprintf("%v", err) != fmt.Sprintf("%v", tt.err) {
 			t.Errorf("%s: ReadResponse: unexpected err: %v, want: %v", err, tt.err)
 			continue
@@ -154,19 +154,19 @@ func TestReadResponse(t *testing.T) {
 		if err != nil {
 			continue
 		}
-		if ch != tt.ch {
-			t.Errorf("%s: ch: %d, want: %d", tt.title, ch, tt.ch)
+		if resp.Channel != tt.ch {
+			t.Errorf("%s: ch: %d, want: %d", tt.title, resp.Channel, tt.ch)
 			continue
 		}
-		if ts != tt.ts {
-			t.Errorf("%s: ts: %v, want: %v", tt.title, ts, tt.ts)
+		if resp.Timestamp != tt.ts {
+			t.Errorf("%s: ts: %v, want: %v", tt.title, resp.Timestamp, tt.ts)
 			continue
 		}
-		if !bytes.Equal(data, tt.data) {
-			t.Errorf("%s: data:\n%v\nwant:\n%v", tt.title, data, tt.data)
+		if !bytes.Equal(resp.Data, tt.data) {
+			t.Errorf("%s: data:\n%v\nwant:\n%v", tt.title, resp.Data, tt.data)
 			continue
 		}
-		out, err := WriteResponse(ch, ts, data)
+		out, err := WriteResponse(resp)
 		if err != nil {
 			t.Errorf("%s: WriteResponse: %v", tt.title, err)
 			continue

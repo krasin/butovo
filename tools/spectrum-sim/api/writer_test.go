@@ -86,7 +86,12 @@ func TestWriteResponse(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		out, err := WriteResponse(tt.ch, tt.ts, tt.data)
+		resp := &Response{
+			Channel:   tt.ch,
+			Timestamp: tt.ts,
+			Data:      tt.data,
+		}
+		out, err := WriteResponse(resp)
 		if fmt.Sprintf("%v", err) != fmt.Sprintf("%v", tt.err) {
 			t.Errorf("%s: Write: unexpected err: %v, want: %v", tt.title, err, tt.err)
 			continue

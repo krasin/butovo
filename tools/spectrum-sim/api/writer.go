@@ -5,7 +5,6 @@ import (
 	"encoding/binary"
 	"fmt"
 	"math"
-	"time"
 )
 
 // WriteRequest converts a command into the request data.
@@ -34,26 +33,26 @@ func WriteRequest(cmd *Request) ([]byte, error) {
 
 // WriteResponse converts channel, timestamp and packet data into the response data.
 // The format is described in the documentation to ReadResponse.
-func WriteResponse(ch uint32, ts time.Time, data []byte) ([]byte, error) {
+func WriteResponse(resp *Response) ([]byte, error) {
 	var buf bytes.Buffer
-	if ch > math.MaxInt32 {
-		return nil, fmt.Errorf("too large channel: %d. Max value: %d", ch, math.MaxInt32)
+	if resp.Channel > math.MaxInt32 {
+		return nil, fmt.Errorf("too large channel: %d. Max value: %d", resp.Channel, math.MaxInt32)
 	}
-	if len(data) > MaxSize {
-		return nil, fmt.Errorf("too large data size: %d. Max data size: %d", len(data), MaxSize)
+	if len(resp.Data) > MaxSize {
+		return nil, fmt.Errorf("too large data size: %d. Max data size: %d", len(resp.Data), MaxSize)
 	}
 
-	size := 12 + len(data)
+	size := 12 + len(resp.Data)
 	if err := binary.Write(&buf, binary.LittleEndian, uint32(size)); err != nil {
 		return nil, err
 	}
-	if err := binary.Write(&buf, binary.LittleEndian, ch); err != nil {
+	if err := binary.Write(&buf, binary.LittleEndian, resp.Channel); err != nil {
 		return nil, err
 	}
-	if err := binary.Write(&buf, binary.LittleEndian, ts.UnixNano()); err != nil {
+	if err := binary.Write(&buf, binary.LittleEndian, resp.Timestamp.UnixNano()); err != nil {
 		return nil, err
 	}
-	if _, err := buf.Write(data); err != nil {
+	if _, err := buf.Write(resp.Data); err != nil {
 		return nil, err
 	}
 	return buf.Bytes(), nil

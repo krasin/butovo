@@ -69,6 +69,12 @@ func ReadRequest(r io.Reader) (cmd *Request, err error) {
 	}, nil
 }
 
+type Response struct {
+	Channel   uint32
+	Timestamp time.Time
+	Data      []byte
+}
+
 // ReadResponse read a response from the writer.
 // The format is:
 // <uint32 size> <uint32 ch> <int64 ts> <data>
@@ -77,34 +83,32 @@ func ReadRequest(r io.Reader) (cmd *Request, err error) {
 // Channel must not exceed MaxChannel.
 // Timestamp is serialized as a number of nanoseconds since January 1, 1970 UTC.
 // Data length must be not greater than MaxSize.
-func ReadResponse(r io.Reader) (ch uint32, ts time.Time, data []byte, err error) {
+func ReadResponse(r io.Reader) (*Response, error) {
 	var size uint32
-	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
-		err = fmt.Errorf("could not read response body size: %v", err)
-		return
+	if err := binary.Read(r, binary.LittleEndian, &size); err != nil {
+		return nil, fmt.Errorf("could not read response body size: %v", err)
 	}
 	if size > MaxSize+12 {
-		err = fmt.Errorf("response body size too large: %d. Max packet size: %d", size, MaxSize+12)
-		return
+		return nil, fmt.Errorf("response body size too large: %d. Max packet size: %d", size, MaxSize+12)
 	}
 	if size < 12 {
-		err = fmt.Errorf("response body size too small: %d. Min response size: 12", size)
+		return nil, fmt.Errorf("response body size too small: %d. Min response size: 12", size)
 	}
-	data = make([]byte, size)
-	if _, err = io.ReadFull(r, data); err != nil {
-		data = nil
-		err = fmt.Errorf("could not read response body (size: %d): %v", size, err)
-		return
+	data := make([]byte, size)
+	if _, err := io.ReadFull(r, data); err != nil {
+		return nil, fmt.Errorf("could not read response body (size: %d): %v", size, err)
 	}
-	ch = uint32(data[0]) + uint32(data[1])<<8 + uint32(data[2])<<16 + uint32(data[3])<<24
+	ch := uint32(data[0]) + uint32(data[1])<<8 + uint32(data[2])<<16 + uint32(data[3])<<24
 	if ch > MaxChannel {
-		data = nil
-		err = fmt.Errorf("channel is too large: %d. Max channel: %d", ch, MaxChannel)
-		return
+		return nil, fmt.Errorf("channel is too large: %d. Max channel: %d", ch, MaxChannel)
 	}
 	v := int64(data[4]) + int64(data[5])<<8 + int64(data[6])<<16 + int64(data[7])<<24 +
 		int64(data[8])<<32 + int64(data[9])<<40 + int64(data[10])<<48 + int64(data[11])<<56
-	ts = time.Unix(v/int64(1E9), v%int64(1E9))
+	ts := time.Unix(v/int64(1E9), v%int64(1E9))
 	data = data[12:]
-	return
+	return &Response{
+		Channel:   ch,
+		Timestamp: ts,
+		Data:      data,
+	}, nil
 }

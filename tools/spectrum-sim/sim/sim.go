@@ -36,7 +36,12 @@ func runChannel(id uint32, ch <-chan chanReq, errChan chan<- error) {
 		log.Printf("Channel %d: %+v", id, req)
 		switch req.cmd {
 		case chanSend:
-			data, err := api.WriteResponse(uint32(id), req.ts, req.data)
+			resp := &api.Response{
+				Channel:   id,
+				Timestamp: req.ts,
+				Data:      req.data,
+			}
+			data, err := api.WriteResponse(resp)
 			if err != nil {
 				errChan <- err
 				continue
