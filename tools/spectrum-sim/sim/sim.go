@@ -55,6 +55,7 @@ func runChannel(id uint32, ch <-chan chanReq, errChan chan<- error) {
 			delete(lis, req.key)
 		}
 	}
+	log.Printf("runChannel(%d): quit", id)
 }
 
 func newChannel(id uint32, errChan chan<- error) chan<- chanReq {
@@ -67,22 +68,43 @@ type Server struct {
 	m       sync.Mutex
 	errChan chan<- error
 	chans   map[uint32]chan<- chanReq
+	cnt     map[uint32]int
 }
 
 func NewServer(errChan chan<- error) *Server {
 	return &Server{
 		chans:   make(map[uint32]chan<- chanReq),
+		cnt:     make(map[uint32]int),
 		errChan: errChan,
 	}
 }
 
-func (s *Server) getChannel(ch uint32) chan<- chanReq {
+func (s *Server) getChannel(ch uint32, mayCreate bool) chan<- chanReq {
 	s.m.Lock()
 	defer s.m.Unlock()
 	if s.chans[ch] == nil {
+		if !mayCreate {
+			return nil
+		}
 		s.chans[ch] = newChannel(ch, s.errChan)
 	}
+	s.cnt[ch]++
 	return s.chans[ch]
+}
+
+func (s *Server) releaseChannel(ch uint32, key string) {
+	s.m.Lock()
+	defer s.m.Unlock()
+	s.chans[ch] <- chanReq{
+		cmd: chanForget,
+		key: key,
+	}
+	s.cnt[ch]--
+	if s.cnt[ch] == 0 {
+		log.Printf("Channel %d does not have any listeners anymore", ch)
+		close(s.chans[ch])
+		delete(s.chans, ch)
+	}
 }
 
 func runSender(w io.Writer, recvCh <-chan []byte, closeCh <-chan bool, errChan chan<- error) {
@@ -100,7 +122,7 @@ func runSender(w io.Writer, recvCh <-chan []byte, closeCh <-chan bool, errChan c
 }
 
 func (s *Server) Handle(conn net.Conn) {
-	log.Printf("Conn: %+v\n", conn)
+	log.Printf("Conn: %+v", conn)
 	defer conn.Close()
 
 	recvCh := make(chan []byte, 1)
@@ -112,14 +134,10 @@ func (s *Server) Handle(conn net.Conn) {
 	key := fmt.Sprintf("key-%d", time.Now().UnixNano())
 
 	forget := func() {
-		if curCh < 0 {
+		if curCh == math.MaxUint32 {
 			return
 		}
-
-		s.getChannel(curCh) <- chanReq{
-			cmd: chanForget,
-			key: key,
-		}
+		s.releaseChannel(curCh, key)
 		curCh = math.MaxUint32
 	}
 	defer forget()
@@ -130,11 +148,15 @@ func (s *Server) Handle(conn net.Conn) {
 			log.Printf("Client %v: %v", conn.RemoteAddr(), err)
 			return
 		}
-		ch := s.getChannel(cmd.Channel)
 
 		switch cmd.Cmd {
 		case api.Send:
 			forget()
+			ch := s.getChannel(cmd.Channel, false)
+			if ch == nil {
+				// no listeners
+				break
+			}
 			ch <- chanReq{
 				cmd:  chanSend,
 				data: cmd.Data,
@@ -142,6 +164,7 @@ func (s *Server) Handle(conn net.Conn) {
 			}
 		case api.Listen:
 			forget()
+			ch := s.getChannel(cmd.Channel, true)
 			ch <- chanReq{
 				cmd: chanListen,
 				key: key,
