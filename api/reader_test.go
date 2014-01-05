@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"io"
 	"testing"
+	"time"
 )
 
 func TestReadRequest(t *testing.T) {
@@ -89,6 +90,56 @@ func TestReadRequest(t *testing.T) {
 		}
 		if !bytes.Equal(out, tt.in) {
 			t.Errorf("%q: WriteRequest(%+v): %v, want: %v", tt.title, out, tt.in)
+			continue
+		}
+	}
+}
+
+func TestReadResponse(t *testing.T) {
+	tests := []struct {
+		title string
+		in    []byte
+		ch    uint32
+		ts    time.Time
+		data  []byte
+		err   error
+	}{
+		{
+			title: "hello",
+			in: []byte{17, 0, 0, 0,
+				4, 1, 0, 0,
+				0x89, 0x67, 0x45, 0x23, 0x78, 0x56, 0x34, 0x12,
+				'h', 'e', 'l', 'l', 'o'},
+			ch:   260,
+			ts:   timestamp,
+			data: []byte("hello"),
+		},
+	}
+	for _, tt := range tests {
+		ch, ts, data, err := ReadResponse(bytes.NewBuffer(tt.in))
+		if fmt.Sprintf("%v", err) != fmt.Sprintf("%v", tt.err) {
+			t.Errorf("%s: ReadResponse: unexpected err: %v, want: %v", err, tt.err)
+			continue
+		}
+		if ch != tt.ch {
+			t.Errorf("%s: ch: %d, want: %d", tt.title, ch, tt.ch)
+			continue
+		}
+		if ts != tt.ts {
+			t.Errorf("%s: ts: %v, want: %v", tt.title, ts, tt.ts)
+			continue
+		}
+		if !bytes.Equal(data, tt.data) {
+			t.Errorf("%s: data:\n%v\nwant:\n%v", tt.title, data, tt.data)
+			continue
+		}
+		out, err := WriteResponse(ch, ts, data)
+		if err != nil {
+			t.Errorf("%s: WriteResponse: %v", tt.title, err)
+			continue
+		}
+		if !bytes.Equal(out, tt.in) {
+			t.Errorf("%s: WriteResponse: %v, want: %v", tt.title, out, tt.in)
 			continue
 		}
 	}
