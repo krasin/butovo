@@ -31,7 +31,7 @@ func TestWriteResponse(t *testing.T) {
 			ch:    23,
 			ts:    timestamp,
 			data:  make([]byte, 200),
-			err:   errors.New("too large data size: 200. Max data size: 120"),
+			err:   errors.New("too large data size: 200. Max data size: 116"),
 		},
 		{
 			title: "Some data",
