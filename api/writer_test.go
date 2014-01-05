@@ -9,7 +9,7 @@ import (
 
 const timestamp = 0x1234567823456789
 
-func TestWrite(t *testing.T) {
+func TestWriteResponse(t *testing.T) {
 	tests := []struct {
 		title string
 		ch    uint32
@@ -19,7 +19,7 @@ func TestWrite(t *testing.T) {
 		err   error
 	}{
 		{
-			title: "Send",
+			title: "Some data",
 			ch:    38,
 			ts:    time.Unix(timestamp/int64(1E9), timestamp%int64(1E9)),
 			data:  []byte("Hello"),
@@ -32,7 +32,7 @@ func TestWrite(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		out, err := Write(tt.ch, tt.ts, tt.data)
+		out, err := WriteResponse(tt.ch, tt.ts, tt.data)
 		if fmt.Sprintf("%v", err) != fmt.Sprintf("%v", tt.err) {
 			t.Errorf("%s: Write: unexpected err: %v, want: %v", tt.title, err, tt.err)
 			continue

@@ -8,7 +8,7 @@ import (
 	"time"
 )
 
-func Write(ch uint32, ts time.Time, data []byte) ([]byte, error) {
+func WriteResponse(ch uint32, ts time.Time, data []byte) ([]byte, error) {
 	var buf bytes.Buffer
 	if ch > math.MaxInt32 {
 		return nil, fmt.Errorf("too large channel: %d. Max value: %d", ch, math.MaxInt32)
