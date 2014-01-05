@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-func TestRead(t *testing.T) {
+func TestReadRequest(t *testing.T) {
 	tests := []struct {
 		title string
 		in    []byte
@@ -61,7 +61,7 @@ func TestRead(t *testing.T) {
 	}
 
 	for _, tt := range tests {
-		cmd, err := Read(bytes.NewBuffer(tt.in))
+		cmd, err := ReadRequest(bytes.NewBuffer(tt.in))
 		if fmt.Sprintf("%v", err) != fmt.Sprintf("%v", tt.err) {
 			t.Errorf("%q: unexpected error: %v, ch: %d, want: %v", tt.title, err, cmd.Channel, tt.err)
 			continue

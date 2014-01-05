@@ -137,7 +137,7 @@ func (s *server) handle(conn net.Conn) {
 	defer forget()
 
 	for {
-		cmd, err := api.Read(conn)
+		cmd, err := api.ReadRequest(conn)
 		if err != nil {
 			log.Printf("Client %v: %v", conn.RemoteAddr(), err)
 			return

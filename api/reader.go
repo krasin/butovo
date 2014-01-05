@@ -22,7 +22,7 @@ type Command struct {
 	Data    []byte
 }
 
-func Read(r io.Reader) (cmd *Command, err error) {
+func ReadRequest(r io.Reader) (cmd *Command, err error) {
 	var size uint32
 	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
 		err = fmt.Errorf("could not read command body size: %v", err)
