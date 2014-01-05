@@ -14,7 +14,7 @@ func WriteResponse(ch uint32, ts time.Time, data []byte) ([]byte, error) {
 		return nil, fmt.Errorf("too large channel: %d. Max value: %d", ch, math.MaxInt32)
 	}
 	if len(data) > MaxSize-8 {
-		return nil, fmt.Errorf("too large data size: %d. Max data size: ", MaxSize-8)
+		return nil, fmt.Errorf("too large data size: %d. Max data size: %d", len(data), MaxSize-8)
 	}
 
 	size := 12 + len(data)

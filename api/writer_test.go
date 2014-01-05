@@ -2,12 +2,15 @@ package api
 
 import (
 	"bytes"
+	"errors"
 	"fmt"
 	"testing"
 	"time"
 )
 
-const timestamp = 0x1234567823456789
+const tsval = 0x1234567823456789
+
+var timestamp = time.Unix(tsval/int64(1E9), tsval%int64(1E9))
 
 func TestWriteResponse(t *testing.T) {
 	tests := []struct {
@@ -19,9 +22,21 @@ func TestWriteResponse(t *testing.T) {
 		err   error
 	}{
 		{
+			title: "Too large channel",
+			ch:    1 << 31,
+			err:   errors.New("too large channel: 2147483648. Max value: 2147483647"),
+		},
+		{
+			title: "Too long data",
+			ch:    23,
+			ts:    timestamp,
+			data:  make([]byte, 200),
+			err:   errors.New("too large data size: 200. Max data size: 120"),
+		},
+		{
 			title: "Some data",
 			ch:    38,
-			ts:    time.Unix(timestamp/int64(1E9), timestamp%int64(1E9)),
+			ts:    timestamp,
 			data:  []byte("Hello"),
 			out: []byte{17, 0, 0, 0,
 				38, 0, 0, 0,
