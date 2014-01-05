@@ -4,6 +4,7 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
+	"math"
 	"time"
 )
 
@@ -12,10 +13,13 @@ type CommandType int
 const (
 	Send   CommandType = 0
 	Listen CommandType = 1
+)
 
-	MinSize    = 8
-	MaxSize    = 128
-	MaxChannel = 1<<31 - 1
+const (
+	// Max data length
+	MaxSize = 128
+
+	MaxChannel = math.MaxInt32
 )
 
 type Command struct {
@@ -41,8 +45,8 @@ func ReadRequest(r io.Reader) (cmd *Command, err error) {
 		err = fmt.Errorf("command body size too large: %d. Max packet size: %d", size, MaxSize+8)
 		return
 	}
-	if size < MinSize {
-		err = fmt.Errorf("command body size too small: %d. Min packet size: %d", size, MinSize)
+	if size < 8 {
+		err = fmt.Errorf("command body size too small: %d. Min packet size: 8", size)
 		return
 	}
 	data := make([]byte, size)

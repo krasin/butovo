@@ -30,12 +30,12 @@ func TestReadRequest(t *testing.T) {
 		{
 			title: "Too small",
 			in:    []byte{2, 0, 0, 0},
-			err:   fmt.Errorf("command body size too small: %d. Min packet size: %d", 2, MinSize),
+			err:   errors.New("command body size too small: 2. Min packet size: 8"),
 		},
 		{
 			title: "Too big",
 			in:    []byte{200, 0, 0, 0},
-			err:   fmt.Errorf("command body size too large: %d. Max packet size: %d", 200, 136),
+			err:   errors.New("command body size too large: 200. Max packet size: 136"),
 		},
 		{
 			title: "No command body",
