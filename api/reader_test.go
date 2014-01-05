@@ -112,6 +112,15 @@ func TestReadResponse(t *testing.T) {
 		err   error
 	}{
 		{
+			title: "Empty",
+			err:   fmt.Errorf("could not read response body size: %v", io.EOF),
+		},
+		{
+			title: "Too short",
+			in:    []byte{100, 0, 0},
+			err:   fmt.Errorf("could not read response body size: %v", io.ErrUnexpectedEOF),
+		},
+		{
 			title: "hello",
 			in: []byte{17, 0, 0, 0,
 				4, 1, 0, 0,
@@ -130,11 +139,19 @@ func TestReadResponse(t *testing.T) {
 			ts:   timestamp,
 			data: make([]byte, 128),
 		},
+		{
+			title: "too long",
+			in:    []byte{200, 0, 0, 0},
+			err:   errors.New("response body size too large: 200. Max packet size: 140"),
+		},
 	}
 	for _, tt := range tests {
 		ch, ts, data, err := ReadResponse(bytes.NewBuffer(tt.in))
 		if fmt.Sprintf("%v", err) != fmt.Sprintf("%v", tt.err) {
 			t.Errorf("%s: ReadResponse: unexpected err: %v, want: %v", err, tt.err)
+			continue
+		}
+		if err != nil {
 			continue
 		}
 		if ch != tt.ch {
