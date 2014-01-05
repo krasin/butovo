@@ -13,8 +13,8 @@ import (
 func WriteRequest(cmd *Command) ([]byte, error) {
 	var buf bytes.Buffer
 
-	if len(cmd.Data) > MaxSize-8 {
-		return nil, fmt.Errorf("too large data size: %d. Max data size: %d", len(cmd.Data), MaxSize-8)
+	if len(cmd.Data) > MaxSize {
+		return nil, fmt.Errorf("too large data size: %d. Max data size: %d", len(cmd.Data), MaxSize)
 	}
 	size := 8 + len(cmd.Data)
 	if err := binary.Write(&buf, binary.LittleEndian, uint32(size)); err != nil {
@@ -33,20 +33,14 @@ func WriteRequest(cmd *Command) ([]byte, error) {
 }
 
 // WriteResponse converts channel, timestamp and packet data into the response data.
-// The format is:
-// <uint32 size> <uint32 ch> <int64 ts> <data>
-// where all multi-byte fields are low-endian.
-// Size is the number of bytes in the rest of the message.
-// Channel must be less than 1^31 = 2147483648.
-// Timestamp is serialized as a number of nanoseconds since January 1, 1970 UTC.
-// Data length must be not greater than MaxSize - 12.
+// The format is described in the documentation to ReadResponse.
 func WriteResponse(ch uint32, ts time.Time, data []byte) ([]byte, error) {
 	var buf bytes.Buffer
 	if ch > math.MaxInt32 {
 		return nil, fmt.Errorf("too large channel: %d. Max value: %d", ch, math.MaxInt32)
 	}
-	if len(data) > MaxSize-12 {
-		return nil, fmt.Errorf("too large data size: %d. Max data size: %d", len(data), MaxSize-12)
+	if len(data) > MaxSize {
+		return nil, fmt.Errorf("too large data size: %d. Max data size: %d", len(data), MaxSize)
 	}
 
 	size := 12 + len(data)

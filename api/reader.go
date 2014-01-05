@@ -28,16 +28,17 @@ type Command struct {
 // The format is:
 // <uint32 size> <uint32 cmd> <uint32 ch> <data>
 // where all multi-byte fields are low-endian.
-// Size is the number of bytes in the rest of the message. It must not exceed MaxSize.
+// Size is the number of bytes in the rest of the message.
 // Channel must not exceeed MaxChannel.
+// Data length must be not greater than MaxSize.
 func ReadRequest(r io.Reader) (cmd *Command, err error) {
 	var size uint32
 	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
 		err = fmt.Errorf("could not read command body size: %v", err)
 		return
 	}
-	if size > MaxSize {
-		err = fmt.Errorf("command body size too large: %d. Max packet size: %d", size, MaxSize)
+	if size > MaxSize+8 {
+		err = fmt.Errorf("command body size too large: %d. Max packet size: %d", size, MaxSize+8)
 		return
 	}
 	if size < MinSize {
@@ -64,14 +65,22 @@ func ReadRequest(r io.Reader) (cmd *Command, err error) {
 	}, nil
 }
 
+// ReadResponse read a response from the writer.
+// The format is:
+// <uint32 size> <uint32 ch> <int64 ts> <data>
+// where all multi-byte fields are low-endian.
+// Size is the number of bytes in the rest of the message.
+// Channel must not exceed MaxChannel.
+// Timestamp is serialized as a number of nanoseconds since January 1, 1970 UTC.
+// Data length must be not greater than MaxSize.
 func ReadResponse(r io.Reader) (ch uint32, ts time.Time, data []byte, err error) {
 	var size uint32
 	if err = binary.Read(r, binary.LittleEndian, &size); err != nil {
 		err = fmt.Errorf("could not read response body size: %v", err)
 		return
 	}
-	if size > MaxSize {
-		err = fmt.Errorf("response body size too large: %d. Max packet size: %d", size, MaxSize)
+	if size > MaxSize+12 {
+		err = fmt.Errorf("response body size too large: %d. Max packet size: %d", size, MaxSize+12)
 		return
 	}
 	if size < 12 {

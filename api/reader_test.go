@@ -35,7 +35,7 @@ func TestReadRequest(t *testing.T) {
 		{
 			title: "Too big",
 			in:    []byte{200, 0, 0, 0},
-			err:   fmt.Errorf("command body size too large: %d. Max packet size: %d", 200, MaxSize),
+			err:   fmt.Errorf("command body size too large: %d. Max packet size: %d", 200, 136),
 		},
 		{
 			title: "No command body",
@@ -53,6 +53,13 @@ func TestReadRequest(t *testing.T) {
 			cmd:   Send,
 			ch:    37,
 			data:  []byte("hello"),
+		},
+		{
+			title: "Send max data len",
+			in:    append([]byte{136, 0, 0, 0, 0, 0, 0, 0, 37, 0, 0, 0}, make([]byte, 128)...),
+			cmd:   Send,
+			ch:    37,
+			data:  make([]byte, 128),
 		},
 		{
 			title: "Listen cmd",
@@ -113,6 +120,15 @@ func TestReadResponse(t *testing.T) {
 			ch:   260,
 			ts:   timestamp,
 			data: []byte("hello"),
+		},
+		{
+			title: "max data len",
+			in: append([]byte{140, 0, 0, 0, 4, 3, 2, 1,
+				0x89, 0x67, 0x45, 0x23, 0x78, 0x56, 0x34, 0x12},
+				make([]byte, 128)...),
+			ch:   0x01020304,
+			ts:   timestamp,
+			data: make([]byte, 128),
 		},
 	}
 	for _, tt := range tests {
