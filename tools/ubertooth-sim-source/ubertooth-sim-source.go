@@ -5,6 +5,7 @@ import (
 	"io"
 	"log"
 	"os"
+	"os/exec"
 	"syscall"
 )
 
@@ -15,7 +16,13 @@ func main() {
 	}
 	defer syscall.Close(fd[0])
 	defer syscall.Close(fd[1])
-	fmt.Printf("/proc/%d/fd/%d\n", os.Getpid(), fd[1])
+	name := fmt.Sprintf("/proc/%d/fd/%d", os.Getpid(), fd[1])
+	fmt.Println(name)
+
+	cmd := exec.Command("ubertooth-btle", "-f", "-d", name)
+	if err := cmd.Start(); err != nil {
+		log.Fatal(err)
+	}
 
 	f := os.NewFile(uintptr(fd[0]), "server")
 	buf := make([]byte, 1024)
