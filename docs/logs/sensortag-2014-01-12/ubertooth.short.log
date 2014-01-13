@@ -1,0 +1,474 @@
+systime=1389592501 freq=2426 addr=8e89bed6 delta_t=3080.582 ms
+00 09 cc 57 6e e5 c5 78 02 01 05 a2 13 4c 
+Advertising / AA 8e89bed6 /  9 bytes
+    Channel Index: 38
+    Type:  ADV_IND
+    AdvA:  78:c5:e5:6e:57:cc (public)
+    AdvData: 02 01 05
+        Type 01 (Flags)
+           00000101
+
+    Data:  cc 57 6e e5 c5 78 02 01 05
+    CRC:   a2 13 4c
+
+systime=1389592501 freq=2426 addr=8e89bed6 delta_t=108.752 ms
+00 09 cc 57 6e e5 c5 78 02 01 05 a2 13 4c 
+Advertising / AA 8e89bed6 /  9 bytes
+    Channel Index: 38
+    Type:  ADV_IND
+    AdvA:  78:c5:e5:6e:57:cc (public)
+    AdvData: 02 01 05
+        Type 01 (Flags)
+           00000101
+
+    Data:  cc 57 6e e5 c5 78 02 01 05
+    CRC:   a2 13 4c
+
+<...>
+
+systime=1389592517 freq=2426 addr=8e89bed6 delta_t=0.494 ms
+05 22 d6 b3 64 83 15 00 cc 57 6e e5 c5 78 06 cb db c1 b8 5f 3d 03 02 00 38 00 00 00 2a 00 ff ff ff ff 1f 29 49 ad 8d 
+Advertising / AA 8e89bed6 / 34 bytes
+    Channel Index: 38
+    Type:  CONNECT_REQ
+    InitA: 00:15:83:64:b3:d6 (public)
+    AdvA:  78:c5:e5:6e:57:cc (public)
+    AA:    c1dbcb06
+    CRCInit: 005fb8
+    WinSize: 03 (3)
+    WinOffset: 0002 (2)
+    Interval: 0038 (56)
+    Latency: 0000 (0)
+    Timeout: 002a (42)
+    ChM: ff ff ff ff 1f
+    Hop: 31
+    SCA: 7, 0 ppm to 20 ppm
+
+    Data:  d6 b3 64 83 15 00 cc 57 6e e5 c5 78 06 cb db c1 b8 5f 3d 03 02 00 38 00 00 00 2a 00 ff ff ff ff 1f 29
+    CRC:   49 ad 8d
+
+
+systime=1389592520 freq=2418 addr=c1dbcb06 delta_t=69.836 ms
+0f 08 01 1f f0 ff ff 1f 33 00 19 c9 12 
+Data / AA c1dbcb06 /  8 bytes
+    Channel Index: 7
+    LLID: 3 / LL Control PDU
+    NESN: 1  SN: 1  MD: 0
+
+    Data:  01 1f f0 ff ff 1f 33 00
+    CRC:   19 c9 12
+
+systime=1389592525 freq=2438 addr=c1dbcb06 delta_t=139.838 ms
+02 0b 07 00 04 00 10 01 00 ff ff 00 28 68 ab b5 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 16
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 0  MD: 0
+
+    Data:  07 00 04 00 10 01 00 ff ff 00 28
+    CRC:   68 ab b5
+
+systime=1389592525 freq=2456 addr=c1dbcb06 delta_t=0.422 ms
+0a 18 14 00 04 00 11 06 01 00 0b 00 00 18 0c 00 0f 00 01 18 10 00 22 00 0a 18 4f 8b 57 
+Data / AA c1dbcb06 / 24 bytes
+    Channel Index: 25
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  14 00 04 00 11 06 01 00 0b 00 00 18 0c 00 0f 00 01 18 10 00 22 00 0a 18
+    CRC:   4f 8b 57
+
+systime=1389592525 freq=2474 addr=c1dbcb06 delta_t=69.644 ms
+02 0b 07 00 04 00 10 23 00 ff ff 00 28 f9 ef c3 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 34
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 0  MD: 0
+
+    Data:  07 00 04 00 10 23 00 ff ff 00 28
+    CRC:   f9 ef c3
+
+
+systime=1389592525 freq=2436 addr=c1dbcb06 delta_t=139.750 ms
+02 0b 07 00 04 00 10 2b 00 ff ff 00 28 20 c0 79 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 15
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 0  MD: 0
+
+    Data:  07 00 04 00 10 2b 00 ff ff 00 28
+    CRC:   20 c0 79
+
+
+systime=1389592526 freq=2454 addr=c1dbcb06 delta_t=0.423 ms
+0a 1a 16 00 04 00 11 14 2b 00 35 00 00 00 00 00 00 00 00 b0 00 40 51 04 10 aa 00 f0 c2 3c 71 
+Data / AA c1dbcb06 / 26 bytes
+    Channel Index: 24
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  16 00 04 00 11 14 2b 00 35 00 00 00 00 00 00 00 00 b0 00 40 51 04 10 aa 00 f0
+    CRC:   c2 3c 71
+
+systime=1389592526 freq=2472 addr=c1dbcb06 delta_t=69.644 ms
+02 0b 07 00 04 00 10 36 00 ff ff 00 28 5d da a5 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 33
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 0  MD: 0
+
+    Data:  07 00 04 00 10 36 00 ff ff 00 28
+    CRC:   5d da a5
+
+systime=1389592526 freq=2434 addr=c1dbcb06 delta_t=139.750 ms
+02 0b 07 00 04 00 10 3e 00 ff ff 00 28 84 f5 1f 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 14
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 0  MD: 0
+
+    Data:  07 00 04 00 10 3e 00 ff ff 00 28
+    CRC:   84 f5 1f
+
+systime=1389592526 freq=2470 addr=c1dbcb06 delta_t=70.067 ms
+02 0b 07 00 04 00 10 49 00 ff ff 00 28 7f 7a 64 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 32
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 0  MD: 0
+
+    Data:  07 00 04 00 10 49 00 ff ff 00 28
+    CRC:   7f 7a 64
+
+systime=1389592526 freq=2412 addr=c1dbcb06 delta_t=0.422 ms
+0a 1a 16 00 04 00 11 14 49 00 54 00 00 00 00 00 00 00 00 b0 00 40 51 04 40 aa 00 f0 cd b4 6a 
+Data / AA c1dbcb06 / 26 bytes
+    Channel Index: 4
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  16 00 04 00 11 14 49 00 54 00 00 00 00 00 00 00 00 b0 00 40 51 04 40 aa 00 f0
+    CRC:   cd b4 6a
+
+systime=1389592526 freq=2432 addr=c1dbcb06 delta_t=69.644 ms
+02 0b 07 00 04 00 10 55 00 ff ff 00 28 f9 bd 99 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 13
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 0  MD: 0
+
+    Data:  07 00 04 00 10 55 00 ff ff 00 28
+    CRC:   f9 bd 99
+
+systime=1389592526 freq=2450 addr=c1dbcb06 delta_t=0.423 ms
+0a 1a 16 00 04 00 11 14 55 00 5c 00 00 00 00 00 00 00 00 b0 00 40 51 04 50 aa 00 f0 e8 77 1d 
+Data / AA c1dbcb06 / 26 bytes
+    Channel Index: 22
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  16 00 04 00 11 14 55 00 5c 00 00 00 00 00 00 00 00 b0 00 40 51 04 50 aa 00 f0
+    CRC:   e8 77 1d
+
+systime=1389592526 freq=2468 addr=c1dbcb06 delta_t=69.644 ms
+02 0b 07 00 04 00 10 5d 00 ff ff 00 28 20 92 23 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 31
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 0  MD: 0
+
+    Data:  07 00 04 00 10 5d 00 ff ff 00 28
+    CRC:   20 92 23
+
+systime=1389592526 freq=2410 addr=c1dbcb06 delta_t=0.327 ms
+0a 0c 08 00 04 00 11 06 5d 00 61 00 e0 ff 63 b9 54 
+Data / AA c1dbcb06 / 12 bytes
+    Channel Index: 3
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  08 00 04 00 11 06 5d 00 61 00 e0 ff
+    CRC:   63 b9 54
+
+systime=1389592526 freq=2430 addr=c1dbcb06 delta_t=69.740 ms
+02 0b 07 00 04 00 10 62 00 ff ff 00 28 cc cc 89 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 12
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 0  MD: 0
+
+    Data:  07 00 04 00 10 62 00 ff ff 00 28
+    CRC:   cc cc 89
+
+systime=1389592526 freq=2448 addr=c1dbcb06 delta_t=0.423 ms
+0a 1a 16 00 04 00 11 14 62 00 68 00 00 00 00 00 00 00 00 b0 00 40 51 04 60 aa 00 f0 7d 36 7d 
+Data / AA c1dbcb06 / 26 bytes
+    Channel Index: 21
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  16 00 04 00 11 14 62 00 68 00 00 00 00 00 00 00 00 b0 00 40 51 04 60 aa 00 f0
+    CRC:   7d 36 7d
+
+systime=1389592526 freq=2466 addr=c1dbcb06 delta_t=69.644 ms
+02 0b 07 00 04 00 10 69 00 ff ff 00 28 18 85 51 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 30
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 0  MD: 0
+
+    Data:  07 00 04 00 10 69 00 ff ff 00 28
+    CRC:   18 85 51
+
+systime=1389592527 freq=2408 addr=c1dbcb06 delta_t=0.422 ms
+0a 1a 16 00 04 00 11 14 69 00 ff ff 00 00 00 00 00 00 00 b0 00 40 51 04 c0 ff 00 f0 ff 2a 2f 
+Data / AA c1dbcb06 / 26 bytes
+    Channel Index: 2
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  16 00 04 00 11 14 69 00 ff ff 00 00 00 00 00 00 00 b0 00 40 51 04 c0 ff 00 f0
+    CRC:   ff 2a 2f
+
+systime=1389592532 freq=2404 addr=c1dbcb06 delta_t=69.804 ms
+0e 07 03 00 04 00 0a 38 00 fa 6d 77 
+Data / AA c1dbcb06 /  7 bytes
+    Channel Index: 0
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 1  MD: 0
+
+    Data:  03 00 04 00 0a 38 00
+    CRC:   fa 6d 77
+
+
+systime=1389592551 freq=2438 addr=c1dbcb06 delta_t=0.202 ms
+06 05 53 88 04 04 13 4c be 4c 
+Data / AA c1dbcb06 /  5 bytes
+    Channel Index: 16
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 0  MD: 0
+
+    Data:  53 88 04 04 13
+    CRC:   4c be 4c
+
+systime=1389592554 freq=2438 addr=c1dbcb06 delta_t=0.295 ms
+0a 09 05 00 04 00 0b 48 6d 12 45 ab 03 8d 
+Data / AA c1dbcb06 /  9 bytes
+    Channel Index: 16
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  05 00 04 00 0b 48 6d 12 45
+    CRC:   ab 03 8d
+
+systime=1389592555 freq=2408 addr=c1dbcb06 delta_t=0.295 ms
+06 09 05 00 04 00 0b 48 6d 3a 45 df ba 7a 
+Data / AA c1dbcb06 /  9 bytes
+    Channel Index: 2
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 0  MD: 0
+
+    Data:  05 00 04 00 0b 48 6d 3a 45
+    CRC:   df ba 7a
+
+systime=1389592556 freq=2478 addr=c1dbcb06 delta_t=69.804 ms
+02 07 03 00 04 00 0a 38 00 da dd a5 
+Data / AA c1dbcb06 /  7 bytes
+    Channel Index: 36
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 0  MD: 0
+
+    Data:  03 00 04 00 0a 38 00
+    CRC:   da dd a5
+
+systime=1389592557 freq=2434 addr=c1dbcb06 delta_t=0.295 ms
+06 09 05 00 04 00 0b 48 6d 3a 45 df ba 7a 
+Data / AA c1dbcb06 /  9 bytes
+    Channel Index: 14
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 0  MD: 0
+
+    Data:  05 00 04 00 0b 48 6d 3a 45
+    CRC:   df ba 7a
+
+systime=1389592562 freq=2452 addr=c1dbcb06 delta_t=69.836 ms
+0f 08 01 0f e0 ff ff 1f 8d 02 5d 09 fe 
+Data / AA c1dbcb06 /  8 bytes
+    Channel Index: 23
+    LLID: 3 / LL Control PDU
+    NESN: 1  SN: 1  MD: 0
+
+    Data:  01 0f e0 ff ff 1f 8d 02
+    CRC:   5d 09 fe
+
+systime=1389592572 freq=2452 addr=c1dbcb06 delta_t=69.835 ms
+0e 09 05 00 04 00 12 39 00 01 00 96 ee 50 
+Data / AA c1dbcb06 /  9 bytes
+    Channel Index: 23
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 1  MD: 0
+
+    Data:  05 00 04 00 12 39 00 01 00
+    CRC:   96 ee 50
+
+
+systime=1389592573 freq=2470 addr=c1dbcb06 delta_t=69.962 ms
+06 05 01 00 04 00 13 4c 36 4c 
+Data / AA c1dbcb06 /  5 bytes
+    Channel Index: 32
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 0  MD: 0
+
+    Data:  01 00 04 00 13
+    CRC:   4c 36 4c
+
+systime=1389592573 freq=2466 addr=c1dbcb06 delta_t=0.295 ms
+06 0b 07 00 04 00 1b 38 00 e4 6c fa 45 a0 ba 3d 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 30
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 0  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 e4 6c fa 45
+    CRC:   a0 ba 3d
+
+systime=1389592577 freq=2456 addr=c1dbcb06 delta_t=0.295 ms
+0a 0b 07 00 04 00 1b 38 00 c4 6c 26 46 0b 68 14 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 25
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 c4 6c 26 46
+    CRC:   0b 68 14
+
+systime=1389592579 freq=2460 addr=c1dbcb06 delta_t=0.295 ms
+06 0b 07 00 04 00 1b 38 00 a4 6c 4e 46 93 d2 6e 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 27
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 0  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 a4 6c 4e 46
+    CRC:   93 d2 6e
+
+systime=1389592581 freq=2464 addr=c1dbcb06 delta_t=70.067 ms
+0a 0b 07 00 04 00 1b 38 00 a4 6c 3e 46 ff 98 6d 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 29
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 a4 6c 3e 46
+    CRC:   ff 98 6d
+
+systime=1389592583 freq=2450 addr=c1dbcb06 delta_t=0.294 ms
+0a 0b 07 00 04 00 1b 38 00 a4 6c 66 46 25 e3 6d 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 22
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 a4 6c 66 46
+    CRC:   25 e3 6d
+
+systime=1389592584 freq=2404 addr=c1dbcb06 delta_t=0.294 ms
+0a 0b 07 00 04 00 1b 38 00 a4 6c 66 46 25 e3 6d 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 0
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 a4 6c 66 46
+    CRC:   25 e3 6d
+
+systime=1389592585 freq=2454 addr=c1dbcb06 delta_t=0.294 ms
+06 0b 07 00 04 00 1b 38 00 84 6c 66 46 a7 4b 46 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 24
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 0  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 84 6c 66 46
+    CRC:   a7 4b 46
+
+systime=1389592586 freq=2408 addr=c1dbcb06 delta_t=0.295 ms
+06 0b 07 00 04 00 1b 38 00 84 6c 66 46 a7 4b 46 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 2
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 0  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 84 6c 66 46
+    CRC:   a7 4b 46
+
+systime=1389592587 freq=2440 addr=c1dbcb06 delta_t=0.295 ms
+06 0b 07 00 04 00 1b 38 00 84 6c 92 46 f0 d7 46 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 17
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 0  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 84 6c 92 46
+    CRC:   f0 d7 46
+
+
+systime=1389592589 freq=2444 addr=c1dbcb06 delta_t=0.295 ms
+0a 0b 07 00 04 00 1b 38 00 84 6c 92 46 78 dd 45 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 19
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 84 6c 92 46
+    CRC:   78 dd 45
+
+systime=1389592592 freq=2478 addr=c1dbcb06 delta_t=0.294 ms
+06 0b 07 00 04 00 1b 38 00 64 6c ba 46 f8 82 9d 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 36
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 0  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 64 6c ba 46
+    CRC:   f8 82 9d
+
+systime=1389592597 freq=2462 addr=c1dbcb06 delta_t=0.263 ms
+13 87 6c 8f ba ed fa 70 50 87 a6 46 
+Data / AA c1dbcb06 /  7 bytes
+    Channel Index: 28
+    LLID: 3 / LL Control PDU
+    NESN: 0  SN: 0  MD: 1
+
+    Data:  6c 8f ba ed fa 70 50
+    CRC:   87 a6 46
+
+systime=1389592598 freq=2454 addr=c1dbcb06 delta_t=0.294 ms
+0a 0b 07 00 04 00 1b 38 00 44 6c e6 46 73 57 b6 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 24
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 44 6c e6 46
+    CRC:   73 57 b6
+
+systime=1389592600 freq=2458 addr=c1dbcb06 delta_t=0.295 ms
+06 0b 07 00 04 00 1b 38 00 44 6c 0e 47 55 65 b4 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 26
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 1  SN: 0  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 44 6c 0e 47
+    CRC:   55 65 b4
+
+systime=1389592602 freq=2462 addr=c1dbcb06 delta_t=0.295 ms
+0a 0b 07 00 04 00 1b 38 00 44 6c 3a 47 da 44 b7 
+Data / AA c1dbcb06 / 11 bytes
+    Channel Index: 28
+    LLID: 2 / LL Data PDU / L2CAP start
+    NESN: 0  SN: 1  MD: 0
+
+    Data:  07 00 04 00 1b 38 00 44 6c 3a 47
+    CRC:   da 44 b7
